@@ -1,21 +1,23 @@
 # Python3 program to convert  
 # time into words
+import os
 import paho.mqtt.client as mqtt    #Import MQTT
-from time import gmtime, strftime  #Import time
+import time
 
 
 # MQTT
 
 print("creating new instance")
-client = mqtt.Client("P1") #  create new instance
+client = mqtt.Client() #  create new instance
 print("connecting to broker")
-client.username_pw_set("username", "password") # user name / password if required
-client.connect("add your mqtt details", 1883) #  address and port of MQTT server
+#client.username_pw_set("username", "password") # user name / password if required
+client.connect("0.0.0.0", 1883) #  address and port of MQTT server
 
 
-
-h = int(strftime("%H", gmtime()))
-m = int(strftime("%M", gmtime()))
+os.environ['TZ'] = 'Europe/Budapest'
+time.tzset()
+h = int(time.strftime("%H"))
+m = int(time.strftime("%M"))
 print(h, m)
 
 '2009-01-05 22:14:39'
@@ -76,7 +78,7 @@ print(timeprint)
 print("Publishing message to topic")
 
 
-client.publish("THE/messages", str(time))  # topic to publish the time ie eink/messages
+client.publish("eink/messages", str(time))  # topic to publish the time ie eink/messages
   
 # This code is adapted from the original script at
 # https://sukhbinder.wordpress.com/2013/12/29/time-in-words-with-python/
