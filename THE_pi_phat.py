@@ -8,28 +8,18 @@ from font_fredoka_one import FredokaOne
 #MQTT Details
 paho = paho.Client()
 # Settings for connection
-host = "your mqtt server" #  address of MQTT server
+host = "0.0.0.0" #  address of MQTT server
 topic= "eink/messages" # topic to subscribe to  - in our case eink/home
 port = 1883  # mqtt port  - normally 1883
-username = "username"  # username if required
-password = "password"  # password if required
-
-
-
-
 
 
 def on_connect(mosq, obj, rc):
     print("connect rc: "+str(rc))
-    
 
 def on_message(mosq, obj, msg):
-# Set up Screen
-
-
-    inky_display = InkyPHAT("red")
-    inky_display.set_border(inky_display.WHITE)
-    img = Image.open("/home/pi/scripts/resources/empty-backdrop.png") # displays an empty background
+    # Set up Screen
+    inky_display = InkyPHAT("yellow")
+    img = Image.new('L',(212, 104), color = 'white') # blank white canvas
     draw = ImageDraw.Draw(img)
 
 # Set MQTT Message 
@@ -38,8 +28,8 @@ def on_message(mosq, obj, msg):
 
 # Set Font etc and Refresh 
     if "The Time" in message:
-        font = ImageFont.truetype("/home/pi/scripts/resources/hm.ttf", 25) # any ttf font can be used
-        fonttop = ImageFont.truetype("/home/pi/scripts/resources/hm.ttf", 25) # any ttf font can be used
+        font = ImageFont.truetype("/home/pi/THE/hm.ttf", 30) # any ttf font can be used
+        fonttop = ImageFont.truetype("/home/pi/THE/hm.ttf", 30) # any ttf font can be used
         wrapped = textwrap.wrap(message, width=15)
 
         if (len(wrapped) >= 1):
@@ -49,7 +39,7 @@ def on_message(mosq, obj, msg):
             # Center the text and align it with the name strip
             x = (inky_display.WIDTH / 2) - (w / 2)
             y = 10 - (h / 2)
-            draw.text((0, 0), status_one, inky_display.RED, fonttop, align="left")
+            draw.text((0, 0), status_one, inky_display.YELLOW, fonttop, align="left")
 
         if (len(wrapped) >= 2):
             # Status Line 2
@@ -80,8 +70,8 @@ def on_message(mosq, obj, msg):
 
     else:
 
-        font = ImageFont.truetype("/home/pi/scripts/resources/hm.ttf", 14) # smaller font for longer text
-        fonttop = ImageFont.truetype("/home/pi/scripts/resources/hm.ttf", 14) # smaller font for longer text
+        font = ImageFont.truetype("/home/pi/THE/hm.ttf", 14) # smaller font for longer text
+        fonttop = ImageFont.truetype("/home/pi/THE/hm.ttf", 14) # smaller font for longer text
         wrapped = textwrap.wrap(message, width=29)
 
         if(len(wrapped) >= 1):
@@ -91,7 +81,7 @@ def on_message(mosq, obj, msg):
             # Center the text and align it with the name strip
             x = (inky_display.WIDTH / 2) - (w / 2)
             y = 10 - (h / 2)
-            draw.text((0, 0), status_one, inky_display.RED, fonttop, align="left")
+            draw.text((0, 0), status_one, inky_display.YELLOW, fonttop, align="left")
 
 
         if(len(wrapped) >= 2):
@@ -136,14 +126,9 @@ def on_message(mosq, obj, msg):
     inky_display.show()
     print (message)
 
-
-
-
 # Following Sections MQTT to Run Defs and Keep Live  
-
 def on_subscribe(mosq, obj, mid, granted_qos):
     print("Subscribed OK")
- 
 
 # Set callbacks
 paho.on_message = on_message
@@ -155,12 +140,9 @@ print("Connecting to " +host +"/" +topic)
 paho.connect(host, port, 60)
 paho.subscribe(topic, 0)
 
- 
 # Wait forever, receiving messages
 rc = 0
 while rc == 0:
     rc = paho.loop()
 print("rc: "+str(rc))
 print (msg.payload)
-
-
